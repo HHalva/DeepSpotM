@@ -2,8 +2,10 @@
 
 **DeepSpot-M: a multimodal foundation model for transcriptome-wide virtual spatial transcriptomics from histology.**
 
+[![CI](https://github.com/ratschlab/DeepSpotM/actions/workflows/ci.yml/badge.svg)](https://github.com/ratschlab/DeepSpotM/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/deepspotm)](https://pypi.org/project/deepspotm/)
+[![Python versions](https://img.shields.io/pypi/pyversions/deepspotm)](https://pypi.org/project/deepspotm/)
 [![License: PolyForm NC](https://img.shields.io/badge/License-PolyForm%20NC%201.0.0-yellow.svg)](LICENSE)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![medRxiv](https://img.shields.io/badge/medRxiv-2026.06.19.26356060-blue)](https://www.medrxiv.org/content/10.64898/2026.06.19.26356060v1)
 [![Model on HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Model-orange)](https://huggingface.co/ratschlab/DeepSpotM)
 [![TCGA atlas](https://img.shields.io/badge/%F0%9F%A4%97%20Dataset-TCGA%20atlas-orange)](https://huggingface.co/datasets/ratschlab/TCGA_virtual_spatial_transcriptomics_atlas)
@@ -38,8 +40,19 @@ This design enables zero-shot prediction of genes at inference time.
 ## Install
 
 ```bash
-pip install deepspotm           # from PyPI (when published)
-# or
+pip install deepspotm
+```
+
+Python 3.10 or newer. The `predict_wsi.py` example additionally needs pyvips and
+anndata, available as an extra:
+
+```bash
+pip install "deepspotm[wsi]"
+```
+
+To track the development branch instead:
+
+```bash
 pip install git+https://github.com/ratschlab/DeepSpotM.git
 ```
 
