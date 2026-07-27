@@ -42,9 +42,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
-      # The CPU wheel keeps the runner from pulling the ~2.5 GB CUDA build.
+      # The CPU wheels keep the runner from pulling the ~2.5 GB CUDA build. torch and
+      # torchvision must be installed together from the same index: timm and lightning
+      # otherwise pull the default torchvision from PyPI, and the mismatched pair fails
+      # at import with "operator torchvision::nms does not exist".
       - name: Install CPU-only torch
-        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+        run: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install the package
         run: pip install .[test]
@@ -66,7 +69,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
       - run: pip install build && python -m build
       - name: Install the wheel outside the source tree
         run: |
