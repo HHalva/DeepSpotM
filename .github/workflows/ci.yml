@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # Scoped to tests/ for now. Running this over src/ and examples/ currently
+      # reports 4 findings and would reformat 8 files, so widening the scope is a
+      # separate change rather than something buried in this one.
+      - run: pipx run ruff check tests/
+      - run: pipx run ruff format --check tests/
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Must stay in sync with `requires-python` in pyproject.toml.
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      # The CPU wheel keeps the runner from pulling the ~2.5 GB CUDA build.
+      - name: Install CPU-only torch
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install the package
+        run: pip install .[test]
+
+      # The model weights are gated on the Hugging Face Hub, so CI has no token and
+      # must never reach for them. Every test runs against the packaged assets or a
+      # randomly-initialised module, which is what keeps this job runnable on a fork.
+      - name: Run tests
+        run: pytest -q
+        env:
+          HF_HUB_OFFLINE: "1"
+
+  import-check:
+    # Installs from a built wheel rather than the source tree, so a missing entry in
+    # package-data (the assets the model reads at import time) fails here.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install build && python -m build
+      - name: Install the wheel outside the source tree
+        run: |
+          pip install dist/*.whl
+          cd /tmp && python -c "
+          import deepspotm
+          from deepspotm.config import config
+          from deepspotm.modules import StructureExpression
+          assert config.ALPHABET_PATH.is_file(), 'packaged vocabulary missing from wheel'
+          assert len(StructureExpression().gene_names_ordered) == 19338
+          print('wheel import OK:', deepspotm.__all__)
+          "
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build twine
+      - run: python -m build
+      - name: Check distribution metadata
+        run: twine check --strict dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
