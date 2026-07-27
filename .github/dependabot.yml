@@ -1,0 +1,41 @@
+version: 2
+
+updates:
+  # The model stack moves fast and the floors in pyproject.toml are open-ended, so a
+  # breaking major (transformers 4 -> 5, for instance) reaches users silently today.
+  # Grouping keeps the noise to one PR per week per ecosystem.
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      model-stack:
+        patterns:
+          - torch
+          - lightning
+          - timm
+          - peft
+          - transformers
+          - safetensors
+          - huggingface_hub
+      scientific-python:
+        patterns:
+          - numpy
+          - pandas
+          - pillow
+      dev-tooling:
+        patterns:
+          - pytest*
+          - ruff
+          - build
+          - twine
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns:
+          - "*"

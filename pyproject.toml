@@ -1,5 +1,6 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+# setuptools>=77 is required for the PEP 639 `license` / `license-files` fields.
+requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,14 +8,38 @@ name = "deepspotm"
 version = "1.0.0"
 description = "Predicts spatial gene expression from histology images using pathology foundation models"
 readme = "README.md"
-# Code is released for non-commercial use only; see LICENSE (PolyForm
-# Noncommercial 1.0.0). The model WEIGHTS carry a separate CC-BY-NC-SA-4.0
-# license — see WEIGHTS_LICENSE.
-license = { text = "PolyForm-Noncommercial-1.0.0" }
+# Code is released for non-commercial use only (PolyForm Noncommercial 1.0.0).
+# The model WEIGHTS carry a separate CC-BY-NC-SA-4.0 license, see WEIGHTS_LICENSE.md.
+license = "PolyForm-Noncommercial-1.0.0"
+license-files = ["LICENSE", "WEIGHTS_LICENSE.md", "THIRD_PARTY_LICENSES.md"]
 authors = [
     { name = "Kalin Nonchev", email = "kalin.nonchev@inf.ethz.ch" }
 ]
-requires-python = ">=3.9"
+keywords = [
+    "spatial-transcriptomics",
+    "computational-pathology",
+    "histology",
+    "gene-expression",
+    "foundation-model",
+    "whole-slide-imaging",
+]
+# torch, transformers, peft and lightning all require >=3.10 in their current
+# releases, so a 3.9 install cannot resolve a working dependency set.
+requires-python = ">=3.10"
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+]
 
 dependencies = [
     "torch>=2.0",
@@ -29,12 +54,33 @@ dependencies = [
     "pillow>=9.0",
 ]
 
+[project.optional-dependencies]
+# Extras for examples/predict_wsi.py, which reads slides and writes AnnData.
+wsi = [
+    "pyvips>=2.2",
+    "anndata>=0.10",
+]
+test = [
+    "pytest>=7.0",
+]
+dev = [
+    "deepspotm[test,wsi]",
+    "build>=1.0",
+    "ruff>=0.6",
+    "twine>=5.0",
+]
+
 [project.urls]
 Homepage = "https://github.com/ratschlab/DeepSpotM"
 Issues = "https://github.com/ratschlab/DeepSpotM/issues"
+Paper = "https://www.medrxiv.org/content/10.64898/2026.06.19.26356060v1"
+Weights = "https://huggingface.co/ratschlab/DeepSpotM"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
 deepspotm = ["assets/*.csv", "assets/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
