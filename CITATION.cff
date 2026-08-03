@@ -2,13 +2,26 @@ cff-version: 1.2.0
 message: "If you use DeepSpot-M, please cite the following."
 title: "DeepSpot-M: a multimodal foundation model for transcriptome-wide virtual spatial transcriptomics from histology"
 abstract: >-
-  DeepSpot-M is a multimodal foundation model that maps a histology image tile to
-  spatial gene expression. It tokenises a 224x224 H&E tile with a LoRA-adapted
-  pathology foundation backbone and lets each gene query attend to the patch tokens
-  through a cross-attention gene decoder, so one model predicts transcriptome-wide
-  expression and genes it never saw during training. The code is released under
-  PolyForm Noncommercial 1.0.0; the model weights carry a separate CC-BY-NC-SA-4.0
-  license. Research use only, not for clinical or diagnostic use.
+  Spatial transcriptomics remains costly and low-throughput, limiting it to a small
+  fraction of routine histology and leaving the molecular state of disease unmeasured
+  in most patients. Predicting spatial expression from histology could address this
+  gap, but existing methods are restricted to predefined genes and small cohorts. We
+  present DeepSpot-M, a multimodal foundation model that predicts spatial expression
+  by representing genes with embeddings from foundation models spanning DNA, RNA,
+  proteins, single cells and biomedical text. By reformulating prediction as a query
+  over genes, DeepSpot-M spans the protein-coding transcriptome and predicts genes
+  unseen during training. Trained on a large pan-cancer dataset, it transfers to
+  held-out cancers, outperforming specialised models trained on them, and adapts to
+  new cohorts and single-cell assays from one slide via test-time adaptation. Applied
+  to TCGA, it generates a virtual atlas of 28,664 slides across 32 cancers, recovering
+  a pan-cancer map of malignancy from histology. The same query interface further
+  enables transcriptome restoration, cross-species non-coding RNA inference, in silico
+  variant-effect mapping and natural-language querying. We anticipate DeepSpot-M will
+  provide a scalable foundation for virtual spatial transcriptomics and biomarker
+  discovery.
+  Software note: the code is released under PolyForm Noncommercial 1.0.0; the model
+  weights carry a separate CC-BY-NC-SA-4.0 license. Research use only, not for
+  clinical or diagnostic use.
 authors:
   - family-names: Nonchev
     given-names: Kalin
