@@ -6,7 +6,7 @@
 [![PyPI](https://img.shields.io/pypi/v/deepspotm)](https://pypi.org/project/deepspotm/)
 [![Python versions](https://img.shields.io/pypi/pyversions/deepspotm)](https://pypi.org/project/deepspotm/)
 [![License: PolyForm NC](https://img.shields.io/badge/License-PolyForm%20NC%201.0.0-yellow.svg)](LICENSE)
-[![medRxiv](https://img.shields.io/badge/medRxiv-2026.06.19.26356060-blue)](https://www.medrxiv.org/content/10.64898/2026.06.19.26356060v1)
+[![medRxiv](https://img.shields.io/badge/medRxiv-2026.06.19.26356060-blue)](https://doi.org/10.64898/2026.06.19.26356060)
 [![Model on HuggingFace](https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Model-orange)](https://huggingface.co/ratschlab/DeepSpotM)
 [![TCGA atlas](https://img.shields.io/badge/%F0%9F%A4%97%20Dataset-TCGA%20atlas-orange)](https://huggingface.co/datasets/ratschlab/TCGA_virtual_spatial_transcriptomics_atlas)
 [![HEST Xenium](https://img.shields.io/badge/%F0%9F%A4%97%20Dataset-HEST%20Xenium-orange)](https://huggingface.co/datasets/ratschlab/HEST_Xenium_virtual_spatial_transcriptomics)
@@ -23,7 +23,7 @@ ProtT5, scGPT, Apertus). Because genes are represented as queryable embeddings
 rather than fixed outputs, one model predicts transcriptome-wide expression and
 genes it never saw during training.
 
-The preprint is available [here](https://www.medrxiv.org/content/10.64898/2026.06.19.26356060v1).
+The preprint is available [here](https://doi.org/10.64898/2026.06.19.26356060).
 
 ![DeepSpot-M model overview](assets/model_overview.png)
 
@@ -169,6 +169,7 @@ We also release virtual single-cell Xenium profiles for the 59 HEST-1K samples a
 
 ## Resources
 
+- Package, [deepspotm on PyPI](https://pypi.org/project/deepspotm/)
 - Model, [ratschlab/DeepSpotM](https://huggingface.co/ratschlab/DeepSpotM)
 - TCGA virtual spatial transcriptomics atlas of 28,664 slides across 32 cancers, [ratschlab/TCGA_virtual_spatial_transcriptomics_atlas](https://huggingface.co/datasets/ratschlab/TCGA_virtual_spatial_transcriptomics_atlas)
 - HEST-1K virtual single-cell Xenium profiles for 59 samples, [ratschlab/HEST_Xenium_virtual_spatial_transcriptomics](https://huggingface.co/datasets/ratschlab/HEST_Xenium_virtual_spatial_transcriptomics)
@@ -178,7 +179,7 @@ We also release virtual single-cell Xenium profiles for the 59 HEST-1K samples a
 This project uses a split license.
 
 - Code, [PolyForm Noncommercial 1.0.0](LICENSE). Non-commercial use only.
-- Model weights, [CC-BY-NC-SA-4.0](WEIGHTS_LICENSE). Non-commercial, ShareAlike, with
+- Model weights, [CC-BY-NC-SA-4.0](WEIGHTS_LICENSE.md). Non-commercial, ShareAlike, with
   attribution.
 
 See [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for the backbone and
@@ -188,16 +189,17 @@ gene-embedding sources, all MIT or Apache-2.0.
 
 DeepSpot-M: a multimodal foundation model for transcriptome-wide virtual spatial
 transcriptomics from histology
-([medRxiv, 2026](https://www.medrxiv.org/content/10.64898/2026.06.19.26356060v1)).
+([medRxiv, 2026](https://doi.org/10.64898/2026.06.19.26356060)).
 
 ```bibtex
 @article{nonchev2026deepspotm,
   title={DeepSpot-M: a multimodal foundation model for transcriptome-wide virtual spatial transcriptomics from histology},
-  author={Nonchev, Kalin and Dawo, Sebastian and Silina, Karina and Koelzer, Viktor Hendrik and Raetsch, Gunnar},
+  author={Nonchev, Kalin and Dawo, Sebastian and Silina, Karina and Koelzer, Viktor Hendrik and R{\"a}tsch, Gunnar},
   journal={medRxiv},
-  pages={2026--06},
   year={2026},
-  publisher={Cold Spring Harbor Laboratory Press}
+  doi={10.64898/2026.06.19.26356060},
+  url={https://doi.org/10.64898/2026.06.19.26356060},
+  publisher={openRxiv}
 }
 ```
 

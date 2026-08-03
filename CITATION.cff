@@ -1,6 +1,14 @@
 cff-version: 1.2.0
 message: "If you use DeepSpot-M, please cite the following."
 title: "DeepSpot-M: a multimodal foundation model for transcriptome-wide virtual spatial transcriptomics from histology"
+abstract: >-
+  DeepSpot-M is a multimodal foundation model that maps a histology image tile to
+  spatial gene expression. It tokenises a 224x224 H&E tile with a LoRA-adapted
+  pathology foundation backbone and lets each gene query attend to the patch tokens
+  through a cross-attention gene decoder, so one model predicts transcriptome-wide
+  expression and genes it never saw during training. The code is released under
+  PolyForm Noncommercial 1.0.0; the model weights carry a separate CC-BY-NC-SA-4.0
+  license. Research use only, not for clinical or diagnostic use.
 authors:
   - family-names: Nonchev
     given-names: Kalin
@@ -18,9 +26,25 @@ authors:
   - family-names: Rätsch
     given-names: Gunnar
     affiliation: "ETH Zurich"
-year: 2026
+version: "1.0.0"
+date-released: "2026-07-27"
 url: "https://github.com/ratschlab/DeepSpotM"
-license: "CC-BY-NC-SA-4.0"
+repository-code: "https://github.com/ratschlab/DeepSpotM"
+# The code license. The model weights are licensed separately, see WEIGHTS_LICENSE.md.
+license: "PolyForm-Noncommercial-1.0.0"
+keywords:
+  - spatial-transcriptomics
+  - computational-pathology
+  - histology
+  - gene-expression
+  - foundation-model
+  - whole-slide-imaging
+  - multimodal
+  - deep-learning
+identifiers:
+  - type: doi
+    value: "10.64898/2026.06.19.26356060"
+    description: "The medRxiv preprint describing DeepSpot-M."
 preferred-citation:
   type: article
   title: "DeepSpot-M: a multimodal foundation model for transcriptome-wide virtual spatial transcriptomics from histology"
@@ -37,4 +61,7 @@ preferred-citation:
       given-names: Gunnar
   journal: "medRxiv"
   year: 2026
-  publisher: "Cold Spring Harbor Laboratory Press"
+  doi: "10.64898/2026.06.19.26356060"
+  url: "https://doi.org/10.64898/2026.06.19.26356060"
+  publisher:
+    name: "openRxiv"
