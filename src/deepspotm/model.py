@@ -367,11 +367,25 @@ class DeepSpotM(pl.LightningModule):
     # ------------------------------------------------------------------ #
     #  Forward                                                             #
     # ------------------------------------------------------------------ #
-    def encode_patch_kv(self, pixel_values):
+    def encode_patch_kv(self, pixel_values: torch.Tensor) -> torch.Tensor:
+        """Encode image tiles into gene-independent projected patch tokens."""
+        if not self.hparams.use_cross_attention:
+            raise RuntimeError(
+                "patch_kv caching requires use_cross_attention=True."
+            )
         patch_tokens = self.backbone.forward_patch_tokens(pixel_values)
         return self.gene_decoder.patch_proj(patch_tokens)
 
-    def decode_patch_kv(self, patch_kv, gene_indices=None):
+    def decode_patch_kv(
+        self,
+        patch_kv: torch.Tensor,
+        gene_indices=None,
+    ) -> tuple[torch.Tensor, torch.Tensor, list[torch.Tensor] | None]:
+        """Decode projected patch tokens into gene-expression predictions."""
+        if not self.hparams.use_cross_attention:
+            raise RuntimeError(
+                "patch_kv caching requires use_cross_attention=True."
+            )
         return self.gene_decoder.forward_from_patch_kv(
             patch_kv,
             gene_indices=gene_indices,
