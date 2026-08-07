@@ -367,6 +367,16 @@ class DeepSpotM(pl.LightningModule):
     # ------------------------------------------------------------------ #
     #  Forward                                                             #
     # ------------------------------------------------------------------ #
+    def encode_patch_kv(self, pixel_values):
+        patch_tokens = self.backbone.forward_patch_tokens(pixel_values)
+        return self.gene_decoder.patch_proj(patch_tokens)
+
+    def decode_patch_kv(self, patch_kv, gene_indices=None):
+        return self.gene_decoder.forward_from_patch_kv(
+            patch_kv,
+            gene_indices=gene_indices,
+        )
+
     def forward(self, pixel_values, gene_indices=None):
         """Predict expression from image tiles.
 
@@ -376,10 +386,9 @@ class DeepSpotM(pl.LightningModule):
         attended. The output columns follow ``gene_indices`` order.
         """
         if self.hparams.use_cross_attention:
-            patch_tokens = self.backbone.forward_patch_tokens(pixel_values)
-            need_weights = False
-            expression, pooled, attn_weights = self.gene_decoder(
-                patch_tokens, need_weights=need_weights, gene_indices=gene_indices,
+            patch_kv = self.encode_patch_kv(pixel_values)
+            expression, pooled, attn_weights = self.decode_patch_kv(
+                patch_kv, gene_indices=gene_indices
             )
         else:
             pooled = self.backbone(pixel_values)

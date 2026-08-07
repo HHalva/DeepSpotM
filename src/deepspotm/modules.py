@@ -710,11 +710,12 @@ class CrossAttentionGeneDecoder(nn.Module):
 
         self.use_router = use_router
 
-    def forward(self, patch_tokens, need_weights=False, gene_bio_embeddings=None,
-                gene_indices=None):
+
+    def forward_from_patch_kv(self, patch_kv, need_weights=False,
+                              gene_bio_embeddings=None, gene_indices=None):
         """
         Args:
-            patch_tokens: (B, N_patches, patch_dim)
+            patch_kv: (B, N_patches, gene_embed_dim)
             need_weights: return attention weights for interpretability
             gene_bio_embeddings: optional (G, bio_dim) override for zero-shot
                 inference on unseen genes. If None, uses the stored buffer.
@@ -722,28 +723,24 @@ class CrossAttentionGeneDecoder(nn.Module):
                 predict. When given, only those gene queries are built and
                 cross-attended, so cost scales with len(gene_indices) instead of
                 the full panel. The output is ordered to match gene_indices.
-        Returns:
-            expression: (B, G) — G == len(gene_indices) if subsetting
-            gene_features: (B, gene_embed_dim) — mean-pooled gene queries
-            attn_weights: list of attention weight tensors or None
         """
-        B = patch_tokens.shape[0]
-        patch_kv = self.patch_proj(patch_tokens)
-
+        B = patch_kv.shape[0]
         if gene_indices is not None and not torch.is_tensor(gene_indices):
             gene_indices = torch.as_tensor(gene_indices, dtype=torch.long)
         if gene_indices is not None:
-            gene_indices = gene_indices.to(patch_tokens.device)
+            gene_indices = gene_indices.to(patch_kv.device)
 
         if self.multi_source is not None:
             # Multi-source mode: the active source's adapter produces (G, D),
             # then we expand to (B, G, D) — symmetric with the single-source
             # path below.
-            gene_queries = self.multi_source(gene_indices=gene_indices).unsqueeze(0).expand(B, -1, -1)
+            gene_queries = self.multi_source(
+                gene_indices=gene_indices
+            ).unsqueeze(0).expand(B, -1, -1)
         else:
             if gene_indices is None:
                 gene_ids = torch.arange(
-                    self.gene_embeddings.num_embeddings, device=patch_tokens.device,
+                    self.gene_embeddings.num_embeddings, device=patch_kv.device,
                 )
             else:
                 gene_ids = gene_indices
@@ -788,3 +785,26 @@ class CrossAttentionGeneDecoder(nn.Module):
 
         gene_features = gene_queries.mean(dim=1)  # (B, gene_embed_dim)
         return expression, gene_features, attn_weights_all if need_weights else None
+
+    def forward(self, patch_tokens, need_weights=False, gene_bio_embeddings=None,
+                gene_indices=None):
+        """
+        Args:
+            patch_tokens: (B, N_patches, patch_dim)
+            need_weights: return attention weights for interpretability
+            gene_bio_embeddings: optional (G, bio_dim) override for zero-shot
+                inference on unseen genes. If None, uses the stored buffer.
+            gene_indices: optional 1-D LongTensor selecting a subset of genes to
+                predict. When given, only those gene queries are built and
+                cross-attended, so cost scales with len(gene_indices) instead of
+                the full panel. The output is ordered to match gene_indices.
+        Returns:
+            expression: (B, G) — G == len(gene_indices) if subsetting
+            gene_features: (B, gene_embed_dim) — mean-pooled gene queries
+            attn_weights: list of attention weight tensors or None
+        """
+        patch_kv = self.patch_proj(patch_tokens)
+        return self.forward_from_patch_kv(
+            patch_kv, need_weights=need_weights,
+            gene_bio_embeddings=gene_bio_embeddings, gene_indices=gene_indices
+        )
